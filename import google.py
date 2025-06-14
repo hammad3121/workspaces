@@ -1,7 +1,5 @@
-google-generativeai
-
-import google.generativeai as genai
 import streamlit as st
+import google.generativeai as genai
 
 # API Configuration
 GOOGLE_API_KEY = "AIzaSyA263PFo-EEA9qs_-93Cy5v79nhVoUxQLc"
@@ -22,20 +20,20 @@ def getResponseFromModel(user_input):
         st.error(f"Details: {e}")
         return "Sorry, something went wrong. Please try again later."
 
-# Page config
+# Streamlit page config
 st.set_page_config(page_title="AI Chat with Gemini", page_icon="🤖")
 st.title("🤖 AI Chatbot")
 st.subheader("Welcome, Hammad Amjad")
 st.write("This chatbot is powered by Gemini API")
 
-# Sidebar: Select mode
+# Sidebar: Choose mode
 interview_type = st.sidebar.radio("🧠 Choose Mode:", ["General Chat", "Coding Interview", "System Design"])
 
-# Chat history
+# Session state for chat history
 if "history" not in st.session_state:
     st.session_state["history"] = []
 
-# Custom CSS for chat bubbles
+# Chat bubble styling
 st.markdown("""
     <style>
     .user-bubble, .bot-bubble {
@@ -62,20 +60,21 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Show buttons for mock questions
+# Coding question prompt
 if interview_type == "Coding Interview":
     if st.button("🎯 Get a Coding Question"):
         question = getResponseFromModel("Give me a challenging coding interview question.")
         st.session_state["history"].append(("Give me a coding interview question", question))
         st.rerun()
 
+# System design prompt
 if interview_type == "System Design":
     if st.button("🛠️ Get a System Design Prompt"):
         prompt = getResponseFromModel("Give me a realistic system design interview question.")
         st.session_state["history"].append(("Give me a system design interview question", prompt))
         st.rerun()
 
-# Input form
+# Chat input form
 with st.form(key="chat_form", clear_on_submit=True):
     user_input = st.text_area("Your Message / Answer", max_chars=3000, placeholder="Type your response here...", height=150)
     submit_button = st.form_submit_button("Send")
@@ -102,7 +101,7 @@ if st.session_state["history"]:
         st.session_state["history"] = []
         st.rerun()
 
-# Display history
+# Display chat history
 if st.session_state["history"]:
     for user_message, bot_response in st.session_state["history"]:
         st.markdown(f'<div class="user-bubble"><strong>You:</strong> {user_message}</div>', unsafe_allow_html=True)
